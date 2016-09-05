@@ -9,3 +9,5 @@ libexec
 target
 .ensime
 .sbtserver
+*.token
+.ensime_cache
