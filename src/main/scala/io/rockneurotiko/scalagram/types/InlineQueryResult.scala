@@ -80,7 +80,7 @@ case class InlineQueryResultArticle(
   thumbWidth: Option[Int] = None,
   thumbHeight: Option[Int] = None,
   `type`: InlineQueryType = InlineQueryTypes.Article
-) extends InlineQueryResult
+) extends InlineQueryResult with ReplyInlineKeyboardT
 
 case class InlineQueryResultPhoto(
   id: String,

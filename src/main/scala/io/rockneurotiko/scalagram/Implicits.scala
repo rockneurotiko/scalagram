@@ -13,4 +13,5 @@ object Implicits {
   implicit def toOption[T](x: T) : Option[T] = Option(x)
 
   implicit def builderToInner[T](b: Builder[T]): T = b.end()
+  implicit def builderListToInner[T](b: List[Builder[T]]): List[T] = b.map{_.end()}
 }

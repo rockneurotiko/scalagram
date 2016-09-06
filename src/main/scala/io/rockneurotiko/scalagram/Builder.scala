@@ -43,9 +43,9 @@ trait Replyer[T <: ReplyToT, U] {
   def reply(m: Message) = replyToId(m.id)
 }
 
-trait InlineMarkuper[T <: ReplyInlineKeyboardT, U] {
-  this: RequestBuilder[T, U] =>
-  val fac: T => RequestBuilder[T, U]
+trait InlineMarkuper[T <: ReplyInlineKeyboardT] {
+  this: Builder[T] =>
+  val fac: T => Builder[T]
   val copyMarkup: (T, InlineKeyboardMarkup) => T
 
   def keyboard(key: InlineKeyboard) = fac(copyMarkup(elem, key.end()))

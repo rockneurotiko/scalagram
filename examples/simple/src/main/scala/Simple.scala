@@ -32,15 +32,16 @@ class SimpleBot(token: String) extends Api(token) with Awesome {
   onInline { inline =>
     // fluent api needed for inline!
     if (inline.query == "") {
-      val article1 = InlineArticle("article1", "Test 1", InlineText("*Just a test 1!*"))
-      // val article1 = InlineQueryResultArticle("article1", "Test 1", InputTextMessageContent("*Just a test 1!*", Some("markdown")))
-      answerInlineQuery(AnswerInlineQuery(inline.id, List(article1)))
+      val article1 = InlineArticle("article1", "Test 1", InlineTextContent("*Just a test 1!*").parseMode("markdown"))
+      val article2 = InlineArticle("article2", "Test 2", InlineContent("*Just a test 1!*").parseMode("markdown"))
+
+      answerInlineQuery(AnswerInlineQuery(inline.id, List(article1, article2)))
     }
   }
 
   onInlineRegex(".+".r) { inline =>
     // fluent api needed for inline!
-    val articles = inline.query.split(" ").map(x => InlineQueryResultArticle(x, x, InputTextMessageContent(x)))
+    val articles = inline.query.split(" ").map(x => InlineArticle(x, x, InlineTextContent(x)))
     answerInlineQuery(AnswerInlineQuery(inline.id, articles.toList))
   }
 
