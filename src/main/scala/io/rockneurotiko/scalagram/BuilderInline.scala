@@ -3,8 +3,18 @@ package io.rockneurotiko.scalagram
 import io.rockneurotiko.scalagram.types._
 import io.rockneurotiko.scalagram.Implicits._
 
+class InlineText(val elem: InputTextMessageContent) extends Builder[InputTextMessageContent] {
+}
+object InlineText {
+  def apply(text: String) = new InlineText(InputTextMessageContent(text))
+}
+
 class InlineArticle(val elem: InlineQueryResultArticle) extends Builder[InlineQueryResultArticle] {
 
+}
+object InlineArticle {
+  def apply(id: String, title: String, inputMessageContent: InputMessageContent) = new InlineArticle(InlineQueryResultArticle(id, title, inputMessageContent))
+  // def apply[T <: InputMessageContent](id: String, title: String, inputMessageContent: Builder[T]) = new InlineArticle(InlineQueryResultArticle(id, title, inputMessageContent.end()))
 }
 
 class InlineButton(val elem: InlineKeyboardButton) extends Builder[InlineKeyboardButton] {

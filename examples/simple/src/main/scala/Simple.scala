@@ -1,6 +1,7 @@
 import io.rockneurotiko.scalagram._
 
 import akka.actor.ActorSystem
+import io.rockneurotiko.scalagram.Implicits._
 import io.rockneurotiko.scalagram.types._
 // import io.rockneurotiko.scalagrammacros.Macros._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,7 +32,8 @@ class SimpleBot(token: String) extends Api(token) with Awesome {
   onInline { inline =>
     // fluent api needed for inline!
     if (inline.query == "") {
-      val article1 = InlineQueryResultArticle("article1", "Test 1", InputTextMessageContent("*Just a test 1!*", Some("markdown")))
+      val article1 = InlineArticle("article1", "Test 1", InlineText("*Just a test 1!*"))
+      // val article1 = InlineQueryResultArticle("article1", "Test 1", InputTextMessageContent("*Just a test 1!*", Some("markdown")))
       answerInlineQuery(AnswerInlineQuery(inline.id, List(article1)))
     }
   }
