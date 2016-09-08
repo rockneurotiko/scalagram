@@ -1,5 +1,6 @@
 package io.rockneurotiko.scalagram
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
@@ -12,18 +13,16 @@ import io.rockneurotiko.scalagram.types.TypesJsonSupport._
 import spray.http._
 import spray.json._
 
-class Api (val token: String, requestManager: ApiRequestManager = DefaultApiRequestManager()) extends DefaultJsonProtocol {
+class Api (val token: String, requestManager: ApiRequestManager = DefaultApiRequestManager(), DEBUG: Boolean = true) extends DefaultJsonProtocol {
   private val apiUrl = s"https://api.telegram.org/bot$token/"
   private val fileUrl = s"https://api.telegram.org/file/bot$token/"
 
-  private var subscriptions: List[ApiSubscription] = List()
-
-  var DEBUG = true
+  private val subscriptions: ListBuffer[ApiSubscription] = ListBuffer()
 
   def url(p: String) = s"$apiUrl$p"
 
-  def addSubscription(s: ApiSubscription): ApiSubscription = {subscriptions = subscriptions :+ s; s}
-  def removeSubscription(uuid: String): Any = subscriptions = subscriptions.filterNot(_.uuid == uuid)
+  def addSubscription(s: ApiSubscription): ApiSubscription = {subscriptions += s; s}
+  def removeSubscription(uuid: String): Any = subscriptions.find(_.uuid == uuid).foreach(subscriptions -= _)
   def removeSubscription(api: ApiSubscription): Any = removeSubscription(api.uuid)
   // Middlewares?
 
@@ -288,7 +287,9 @@ object Api {
   def tokenFromEnv(env: String) = sys.env(env)
 
   def apply(token: String): Api = new Api(token)
+  def apply(token: String, debug: Boolean): Api = new Api(token, DEBUG=debug)
   def apply(token: String, requestManager: ApiRequestManager): Api= new Api(token, requestManager)
+  def apply(token: String, requestManager: ApiRequestManager, debug: Boolean): Api= new Api(token, requestManager, debug)
 
   def fromFile(path: String): Api = Api(tokenFromFile(path))
   def fromFile(path: String, requestManager: ApiRequestManager): Api = Api(tokenFromFile(path), requestManager)

@@ -24,7 +24,8 @@ class OneTimeSubscription(api: Api, subs: ApiSubscription) extends ApiSubscripti
 }
 
 class OncePerSenderSubscription(sub: ApiSubscription) extends ApiSubscription {
-  var userIdList: List[Long] = List()
+  import scala.collection.mutable.Set
+  val userIdList: Set[Long] = Set()
   def getId(update: Update): Option[Long] = {
     val list = List(update.message.map(_.sender),
       update.inlineQuery.map(m => m.from.id),
@@ -39,7 +40,7 @@ class OncePerSenderSubscription(sub: ApiSubscription) extends ApiSubscription {
   }
   def handle(update: Update) = {
     sub.handle(update)
-    getId(update).foreach(uid => userIdList = userIdList :+ uid)
+    getId(update).foreach(uid => userIdList += uid)
   }
 }
 
