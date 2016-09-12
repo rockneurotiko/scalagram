@@ -94,7 +94,7 @@ case class InlineQueryResultPhoto(
   replyMarkup: Option[InlineKeyboardMarkup] = None,
   inputMessageContent: Option[InputMessageContent] = None,
   `type`: InlineQueryType =InlineQueryTypes.Photo
-) extends InlineQueryResult
+) extends InlineQueryResult with ReplyInlineKeyboardT
 
 case class InlineQueryResultGif(
   id: String,
