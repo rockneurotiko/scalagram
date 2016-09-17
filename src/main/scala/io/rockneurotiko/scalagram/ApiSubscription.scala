@@ -50,6 +50,7 @@ object AwesomeHelpers {
   def haveInline(update: Update) = update.inlineQuery.isDefined
   def haveChosenResult(update: Update) = update.chosenInlineResult.isDefined
   def haveCallback(update: Update) = update.callbackQuery.isDefined
+  def haveReplyMessage(update: Update) = haveMessage(update) && update.message.get.replyTo.isDefined
 
   def haveText(update: Update) = haveMessage(update) && update.message.get.text.isDefined
 
@@ -63,6 +64,22 @@ object AwesomeHelpers {
       case Some(_) => handler(m)
       case _ =>
     })
+  )
+
+  def replySubscription(chatId: Option[Long] = None, messageId: Option[Long], handler: Message => Any) = new GenericSubscription(
+    update => {
+      if (haveReplyMessage(update)) {
+        if (chatId.isDefined && update.message.get.sender == chatId.get) {
+          if (messageId.isDefined && !(update.message.get.replyTo.get.id == messageId.get)) {
+            false
+          } else {
+            true
+          }
+        }
+        true
+      } else false
+    },
+    update => update.message.foreach(handler(_))
   )
 
   def inlineSubscription(handler: InlineQuery => Any) = new GenericSubscription(
@@ -98,6 +115,17 @@ trait Awesome {
     println(s"WARNING: Command can't have spaces. Command was: ${cmd}")
   } else {
     onRegex(s"""^/${cmd}(@.+)?""".r)(handler)
+  }
+
+  def onReply(chatId: Option[Either[Long, Message]] = None, messageId: Option[Either[Long, Message]] = None)(handler: Message => Any) = {
+    addSubscription(replySubscription(
+      chatId.map(_.fold(l => l, m => m.sender)),
+      messageId.map(_.fold(l => l, m => m.id)),
+      handler))
+  }
+
+  def onReplyTo(msg: Message, handler: Message => Any)  = {
+    addSubscription(replySubscription(Some(msg.id), None, handler))
   }
 
   def onInline(handler: InlineQuery => Any) = {

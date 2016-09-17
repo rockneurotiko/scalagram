@@ -17,6 +17,21 @@ class SimpleBot(token: String) extends Api(token) with Awesome {
     answer(message).text(s"You said: ${message.text.get}").end()
   }
 
+  def customReply(message: Message) {
+    answer(message).text(s"Awesome reply man!").end()
+  }
+
+  onCommand("reply") { message =>
+    answer(message).text(s"Reply this!").force().end()
+      .foreach(eithSended => {
+        eithSended.right.foreach(sended => {
+          oneTime {
+            onReply(message, sended)(customReply(_))
+          }
+        })
+      })
+  }
+
   onRegex("""emacs""".r) { message =>
     answer(message).text("You know what's good man!").end()
   }
@@ -51,9 +66,7 @@ class SimpleBot(token: String) extends Api(token) with Awesome {
 object Simple extends App {
   implicit val system: ActorSystem = ActorSystem("my-super-system")
   val bot = new SimpleBot(Api.tokenFromFile("bot1.token"))
-  bot.DEBUG = false
   val bot2 = new SimpleBot(Api.tokenFromFile("bot2.token"))
-  bot.DEBUG = false
 
   MultiBotLongPoll.run(bot, bot2)
 }
