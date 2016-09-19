@@ -25,7 +25,7 @@ case class ForceReply(
   selective: Option[Boolean] = None) extends ReplyMarkup
 
 case class InlineKeyboardMarkup(
-  inlineKeyboard: Seq[Seq[InlineKeyboardButton]])
+  inlineKeyboard: Seq[Seq[InlineKeyboardButton]]) extends ReplyMarkup
 
 case class InlineKeyboardButton(
   text: String,
@@ -47,7 +47,7 @@ object ReplyMarkupSupport extends DefaultJsonProtocol with SprayJsonSupport {
       case rk: ReplyKeyboardMarkup => rk.toJson
       case fr: ForceReply => fr.toJson
       case rk: ReplyKeyboardHide => rk.toJson
-      case _ => JsObject()
+      case ik: InlineKeyboardMarkup => ik.toJson
   }
   def read(v: JsValue) = ForceReply(true)
 }

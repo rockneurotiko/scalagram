@@ -54,6 +54,7 @@ trait Markuper[T <: ReplyMarkupT, U] {
 
   def keyboard(key: Keyboard) = fac(copyMarkup(elem, key.end()))
   def keyboard(key: ReplyKeyboardMarkup) = fac(copyMarkup(elem, key))
+  def keyboard(key: InlineKeyboardMarkup) = fac(copyMarkup(elem, key))
 }
 
 class TextBuilder(val elem: SendText, val api: Api) extends RequestBuilder[SendText, Message] with Replyer[SendText, Message] with Markuper[SendText, Message] {

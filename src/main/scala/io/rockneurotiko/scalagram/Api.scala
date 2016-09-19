@@ -42,6 +42,11 @@ class Api (val token: String, requestManager: ApiRequestManager = DefaultApiRequ
   def send(i: Long): MessageBuilder = MessageBuilder(i, this)
   def send(u: String): MessageBuilder = MessageBuilder(u, this)
 
+  def edit(m: Message): EditBuilder = EditBuilder(m.sender, m.id, this)
+  def edit(chat_id: Either[String, Long], m_id: Either[Message, Long]): EditBuilder = EditBuilder(chat_id, m_id.fold(_.id, x => x), this)
+  def edit(inl: String): EditBuilder = EditBuilder(inl, this)
+  def edit(inl: InlineQuery): EditBuilder = EditBuilder(inl.id, this)
+
   // BLOCKING!
   def longPoll(offset: Int = 0, limit: Int = 100, timeout: Int = 30): Unit = {
     import scala.concurrent._
